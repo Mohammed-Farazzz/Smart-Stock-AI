@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartStock AI — Inventory Intelligence for Small Businesses</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f2eb;
+  --ink: #0f1a14;
+  --ink2: #2a3d31;
+  --muted: #7a8c80;
+  --accent: #1a7a4a;
+  --accent-lt: #e8f5ee;
+  --accent2: #d4501a;
+  --warn: #c8860a;
+  --warn-lt: #fef6e0;
+  --white: #ffffff;
+  --card: #ffffff;
+  --border: #ddd8ce;
+  --head: 'Bricolage Grotesque', sans-serif;
+  --body: 'DM Sans', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); overflow-x: hidden; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 64px;
+  background: rgba(245,242,235,0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: var(--head); font-weight: 800; font-size: 20px;
+  color: var(--ink); text-decoration: none; letter-spacing: -0.5px;
+}
+.nav-logo .dot { color: var(--accent); }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta { background: var(--ink) !important; color: var(--bg) !important; padding: 9px 20px !important; border-radius: 8px !important; font-weight: 600 !important; }
+.nav-cta:hover { background: var(--accent) !important; color: #fff !important; }
+
+/* HERO */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 120px 5% 80px;
+  position: relative; overflow: hidden;
+}
+.hero-noise {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 20% 50%, rgba(26,122,74,0.07) 0%, transparent 60%),
+                    radial-gradient(circle at 80% 30%, rgba(212,80,26,0.05) 0%, transparent 50%);
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-lt); border: 1px solid rgba(26,122,74,0.2); color: var(--accent);
+  font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 28px; letter-spacing: 0.3px;
+}
+.blink { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: blink 1.8s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+.hero h1 {
+  font-family: var(--head); font-size: clamp(40px, 6vw, 78px);
+  font-weight: 800; line-height: 1.05; letter-spacing: -2.5px;
+  max-width: 860px; margin: 0 auto 24px;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p { font-size: 18px; color: var(--muted); line-height: 1.7; max-width: 540px; margin: 0 auto 40px; }
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+.btn-primary { background: var(--ink); color: #fff; padding: 14px 30px; border-radius: 10px; font-size: 15px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s; font-family: var(--body); }
+.btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+.btn-secondary { background: transparent; color: var(--ink); padding: 14px 30px; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: 1.5px solid var(--border); cursor: pointer; transition: all 0.2s; font-family: var(--body); }
+.btn-secondary:hover { border-color: var(--ink); transform: translateY(-1px); }
+
+.hero-stats { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-top: 60px; overflow: hidden; }
+.hero-stat { flex: 1; padding: 24px 28px; border-right: 1px solid var(--border); text-align: left; }
+.hero-stat:last-child { border-right: none; }
+.hs-num { font-family: var(--head); font-size: 34px; font-weight: 800; letter-spacing: -1.5px; color: var(--ink); line-height: 1; margin-bottom: 4px; }
+.hs-num.green { color: var(--accent); }
+.hs-num.orange { color: var(--accent2); }
+.hs-label { font-size: 12px; color: var(--muted); font-weight: 400; line-height: 1.5; }
+
+/* PROBLEM */
+.problem { padding: 100px 5%; background: var(--ink); color: #fff; }
+.problem-inner { max-width: 1100px; margin: 0 auto; }
+.section-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.problem .section-eyebrow { color: #6ee0a0; }
+.problem h2 { font-family: var(--head); font-size: clamp(30px, 4vw, 52px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 20px; max-width: 680px; }
+.problem-lead { font-size: 17px; color: rgba(255,255,255,0.5); max-width: 560px; line-height: 1.7; margin-bottom: 56px; }
+.problem-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.prob-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px; transition: background 0.2s; }
+.prob-card:hover { background: rgba(255,255,255,0.08); }
+.prob-icon { font-size: 32px; margin-bottom: 16px; display: block; }
+.prob-card h3 { font-family: var(--head); font-size: 18px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 8px; }
+.prob-card p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+/* HOW IT WORKS */
+.how { padding: 100px 5%; }
+.how-inner { max-width: 1100px; margin: 0 auto; }
+.how h2 { font-family: var(--head); font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 12px; }
+.how-lead { font-size: 17px; color: var(--muted); max-width: 480px; line-height: 1.6; margin-bottom: 60px; }
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.step { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; position: relative; transition: box-shadow 0.2s, transform 0.2s; }
+.step:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.08); transform: translateY(-3px); }
+.step-num { font-family: var(--head); font-size: 48px; font-weight: 800; color: rgba(15,26,20,0.06); letter-spacing: -2px; position: absolute; right: 20px; top: 16px; line-height: 1; }
+.step-icon { font-size: 28px; margin-bottom: 16px; }
+.step h3 { font-family: var(--head); font-size: 20px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+.step p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* DEMO */
+.preview { padding: 0 5% 100px; }
+.preview-inner { max-width: 1100px; margin: 0 auto; }
+.preview-header { text-align: center; margin-bottom: 40px; }
+.preview-header h2 { font-family: var(--head); font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 10px; }
+.preview-header p { font-size: 16px; color: var(--muted); }
+
+.tabs { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 5px; margin-bottom: 20px; width: fit-content; }
+.tab { padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: var(--muted); border: none; background: transparent; font-family: var(--body); }
+.tab.active { background: var(--ink); color: #fff; }
+.tab-screen { display: none; }
+.tab-screen.active { display: block; animation: fadein 0.3s ease; }
+@keyframes fadein { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* dark dashboard shell */
+.dash-shell { background: #0c1419; border-radius: 20px; overflow: hidden; border: 1px solid #1a2d3a; box-shadow: 0 32px 80px rgba(0,0,0,0.22); }
+.dash-bar { background: #0a1218; border-bottom: 1px solid #1a2d3a; padding: 12px 20px; display: flex; align-items: center; gap: 8px; }
+.dash-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dash-content { padding: 24px; }
+
+.d-metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.d-card { background: #111c24; border: 1px solid #1a2d3a; border-radius: 12px; padding: 16px; }
+.d-label { font-size: 10px; font-weight: 600; color: #5a7a8a; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.d-val { font-family: var(--head); font-size: 28px; font-weight: 800; letter-spacing: -1px; line-height: 1; color: #e8f4f0; margin-bottom: 4px; }
+.d-val.green { color: #00e5a0; }
+.d-val.orange { color: #ff9040; }
+.d-val.red { color: #ff4560; }
+.d-val.blue { color: #40b8ff; }
+.d-sub { font-size: 11px; color: #5a7a8a; }
+.d-sub.up { color: #00e5a0; }
+.d-sub.down { color: #ff4560; }
+
+.d-row { display: grid; grid-template-columns: 1.8fr 1fr; gap: 12px; }
+.d-panel { background: #111c24; border: 1px solid #1a2d3a; border-radius: 12px; overflow: hidden; }
+.d-panel-head { padding: 12px 16px; border-bottom: 1px solid #1a2d3a; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; color: #c8ddd5; }
+.d-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+.d-badge.green { background: rgba(0,229,160,0.12); color: #00e5a0; }
+.d-badge.red { background: rgba(255,69,96,0.12); color: #ff4560; }
+.d-badge.orange { background: rgba(255,144,64,0.12); color: #ff9040; }
+.d-panel-body { padding: 16px; }
+
+.mini-chart { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+.mini-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
+.mini-bar { width:100%; border-radius:4px 4px 0 0; min-height:4px; }
+.mini-bar.green { background: linear-gradient(180deg,#00e5a0,rgba(0,229,160,0.2)); }
+.mini-bar.faded { background: #1a2d3a; }
+.mini-label { font-size: 8px; color: #5a7a8a; font-family: var(--body); }
+
+.risk-list { display: flex; flex-direction: column; gap: 10px; }
+.risk-row { display: flex; align-items: center; gap: 10px; }
+.risk-name-d { font-size: 11px; color: #c8ddd5; flex: 1; }
+.risk-track { height: 5px; flex: 1; background: #1a2d3a; border-radius: 3px; overflow: hidden; }
+.risk-fill { height: 100%; border-radius: 3px; }
+.risk-pct-d { font-size: 11px; font-weight: 600; width: 28px; text-align: right; font-family: var(--head); }
+
+.d-table { width: 100%; border-collapse: collapse; }
+.d-table th { font-size: 9px; color: #5a7a8a; text-transform: uppercase; letter-spacing: 1px; padding: 8px 12px; text-align: left; border-bottom: 1px solid #1a2d3a; font-weight: 500; }
+.d-table td { padding: 10px 12px; font-size: 12px; color: #c8ddd5; border-bottom: 1px solid rgba(26,45,58,0.5); }
+.d-table tr:last-child td { border-bottom: none; }
+.d-table tr:hover td { background: rgba(255,255,255,0.02); }
+.d-tname { font-weight: 700; font-size: 12px; color: #e8f4f0; }
+.d-chip { font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 10px; letter-spacing: 0.3px; }
+.chip-r { background: rgba(255,69,96,0.12); color: #ff4560; }
+.chip-g { background: rgba(0,229,160,0.1); color: #00e5a0; }
+.chip-y { background: rgba(255,184,0,0.1); color: #ffb800; }
+
+.ai-cards { display: flex; flex-direction: column; gap: 10px; }
+.ai-card { background: #111c24; border: 1px solid #1a2d3a; border-left: 3px solid transparent; border-radius: 10px; padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
+.ai-card.red { border-left-color: #ff4560; }
+.ai-card.green { border-left-color: #00e5a0; }
+.ai-card.yellow { border-left-color: #ffb800; }
+.ai-card.blue { border-left-color: #40b8ff; }
+.ai-icon { font-size: 18px; flex-shrink: 0; }
+.ai-body { flex: 1; }
+.ai-title { font-size: 12px; font-weight: 700; color: #e8f4f0; margin-bottom: 3px; }
+.ai-desc { font-size: 10px; color: #5a7a8a; line-height: 1.5; }
+.ai-impact { font-family: var(--head); font-size: 14px; font-weight: 800; flex-shrink: 0; }
+.ai-impact.green { color: #00e5a0; }
+.ai-impact.red { color: #ff4560; }
+
+/* FEATURES */
+.features { padding: 100px 5%; background: var(--card); }
+.features-inner { max-width: 1100px; margin: 0 auto; }
+.features h2 { font-family: var(--head); font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 12px; }
+.features-lead { font-size: 17px; color: var(--muted); margin-bottom: 56px; max-width: 480px; line-height: 1.6; }
+.feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.feat-card { border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: box-shadow 0.2s, transform 0.2s; }
+.feat-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.07); transform: translateY(-2px); }
+.feat-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; margin-bottom: 16px; }
+.feat-tag.green { background: var(--accent-lt); color: var(--accent); }
+.feat-tag.orange { background: #fdecea; color: var(--accent2); }
+.feat-tag.yellow { background: var(--warn-lt); color: var(--warn); }
+.feat-card h3 { font-family: var(--head); font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 8px; }
+.feat-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* PRICING */
+.pricing { padding: 100px 5%; }
+.pricing-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
+.pricing h2 { font-family: var(--head); font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 12px; }
+.pricing-lead { font-size: 17px; color: var(--muted); margin-bottom: 56px; }
+.price-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.price-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 18px; padding: 32px 28px; text-align: left; position: relative; transition: box-shadow 0.2s; }
+.price-card:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.1); }
+.price-card.popular { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.pop-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 14px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+.price-plan { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 16px; }
+.price-val { font-family: var(--head); font-size: 42px; font-weight: 800; letter-spacing: -2px; line-height: 1; color: var(--ink); margin-bottom: 4px; }
+.price-val sup { font-size: 20px; vertical-align: super; letter-spacing: 0; }
+.price-mo { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.price-features { list-style: none; margin-bottom: 28px; }
+.price-features li { font-size: 14px; color: var(--ink2); padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-start; }
+.price-features li:last-child { border-bottom: none; }
+.check { color: var(--accent); font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.price-btn { display: block; width: 100%; text-align: center; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; border: 1.5px solid var(--border); color: var(--ink); cursor: pointer; background: transparent; font-family: var(--body); }
+.price-btn:hover { border-color: var(--ink); }
+.price-btn.filled { background: var(--accent); color: #fff; border-color: var(--accent); }
+.price-btn.filled:hover { background: var(--ink); border-color: var(--ink); }
+
+/* TESTIMONIALS */
+.testimonials { padding: 100px 5%; background: var(--card); }
+.testi-inner { max-width: 1100px; margin: 0 auto; }
+.testi-inner h2 { font-family: var(--head); font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -1.5px; margin-bottom: 48px; text-align: center; }
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.testi-card { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+.testi-quote { font-size: 14px; line-height: 1.75; color: var(--ink2); margin-bottom: 20px; font-style: italic; }
+.testi-author { display: flex; align-items: center; gap: 12px; }
+.testi-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--accent-lt); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.testi-name { font-size: 14px; font-weight: 700; }
+.testi-role { font-size: 12px; color: var(--muted); }
+
+/* CTA */
+.cta-section { padding: 100px 5%; background: var(--ink); color: #fff; text-align: center; }
+.cta-section h2 { font-family: var(--head); font-size: clamp(32px, 5vw, 60px); font-weight: 800; letter-spacing: -2px; margin-bottom: 16px; line-height: 1.05; }
+.cta-section h2 span { color: #6ee0a0; }
+.cta-section p { font-size: 17px; color: rgba(255,255,255,0.5); max-width: 480px; margin: 0 auto 40px; line-height: 1.65; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-white { background: #fff; color: var(--ink); padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 700; text-decoration: none; border: none; cursor: pointer; transition: all 0.2s; font-family: var(--body); }
+.btn-white:hover { background: #6ee0a0; }
+.btn-ghost { background: transparent; color: rgba(255,255,255,0.7); padding: 14px 32px; border-radius: 10px; font-size: 15px; font-weight: 500; text-decoration: none; border: 1.5px solid rgba(255,255,255,0.15); cursor: pointer; transition: all 0.2s; font-family: var(--body); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+
+footer { background: var(--ink); color: rgba(255,255,255,0.4); text-align: center; padding: 24px 5%; font-size: 13px; border-top: 1px solid rgba(255,255,255,0.06); }
+footer span { color: rgba(255,255,255,0.7); }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">Smart<span class="dot">Stock</span> AI</a>
+  <div class="nav-links">
+    <a href="#how">How it Works</a>
+    <a href="#demo">Demo</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#demo" class="nav-cta">Try Free Demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-noise"></div>
+  <div class="hero-tag"><div class="blink"></div> Now in Beta — Free for Small Retailers</div>
+  <h1>Stop Losing Money<br>on <em>Wrong Inventory</em></h1>
+  <p>SmartStock AI tells small business owners exactly what to buy, when to buy, and what to stop buying — before it becomes a loss.</p>
+  <div class="hero-btns">
+    <a href="#demo" class="btn-primary">See Live Demo</a>
+    <a href="#how" class="btn-secondary">How does it work?</a>
+  </div>
+  <div class="hero-stats reveal">
+    <div class="hero-stat">
+      <div class="hs-num green">38%</div>
+      <div class="hs-label">Average reduction in unsold stock for our users</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-num">52,000</div>
+      <div class="hs-label">Avg. working capital freed per store per year (INR)</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-num orange">3 min</div>
+      <div class="hs-label">Setup time — no tech skills required</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-num green">500+</div>
+      <div class="hs-label">Small retailers already on the waitlist</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="problem-inner">
+    <div class="section-eyebrow">The Problem</div>
+    <h2>Small retailers lose crores every year — silently.</h2>
+    <p class="problem-lead">Running a shop on gut feeling is expensive. Most small business owners have no idea which products are silently draining their money.</p>
+    <div class="problem-cards reveal">
+      <div class="prob-card">
+        <span class="prob-icon">📦</span>
+        <h3>Overbuying stock</h3>
+        <p>You order 500 units, sell 200, and the rest sits on the shelf collecting dust — and eating your cash flow month after month.</p>
+      </div>
+      <div class="prob-card">
+        <span class="prob-icon">📉</span>
+        <h3>Guessing demand</h3>
+        <p>No data. No forecast. Just instinct. And when the season changes, you are left with the wrong products and an empty wallet.</p>
+      </div>
+      <div class="prob-card">
+        <span class="prob-icon">💸</span>
+        <h3>Dead investment</h3>
+        <p>Money stuck in slow-moving products means you cannot buy what actually sells. Working capital blocked. Growth stopped.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <div class="section-eyebrow reveal">How It Works</div>
+    <h2 class="reveal">From messy stock to smart decisions<br>in 3 steps.</h2>
+    <p class="how-lead reveal">No data science degree needed. No complex setup. Just simple answers to hard questions about your inventory.</p>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">📋</div>
+        <h3>Enter your products</h3>
+        <p>Add your product names, current stock levels, and past sales. Takes 3 minutes. No Excel skills needed — just fill in our simple form.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-icon">🧠</div>
+        <h3>AI analyzes everything</h3>
+        <p>Our AI studies your sales patterns, seasonality, and stock movement to predict next month's demand for every single product.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-icon">✅</div>
+        <h3>Get clear suggestions</h3>
+        <p>You receive plain-language recommendations: reduce this, reorder that, watch out for this one. No jargon. Just action you can take today.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="preview" id="demo">
+  <div class="preview-inner">
+    <div class="preview-header reveal">
+      <div class="section-eyebrow">Live Product Demo</div>
+      <h2>See what SmartStock AI looks like</h2>
+      <p>Explore the three screens your dashboard will show you every day</p>
+    </div>
+    <div class="tabs reveal">
+      <button class="tab active" onclick="switchTab('dashboard',this)">Dashboard</button>
+      <button class="tab" onclick="switchTab('products',this)">Product Table</button>
+      <button class="tab" onclick="switchTab('ai',this)">AI Suggestions</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="tab-screen active" id="tab-dashboard">
+      <div class="dash-shell">
+        <div class="dash-bar">
+          <div class="dash-dot" style="background:#ff5f57"></div>
+          <div class="dash-dot" style="background:#ffbd2e"></div>
+          <div class="dash-dot" style="background:#28ca41"></div>
+          <span style="font-size:11px;color:#5a7a8a;margin-left:10px">SmartStock AI — Overview Dashboard</span>
+        </div>
+        <div class="dash-content">
+          <div class="d-metrics">
+            <div class="d-card">
+              <div class="d-label">Revenue This Month</div>
+              <div class="d-val green">4.8 L</div>
+              <div class="d-sub up">12% more than last month</div>
+            </div>
+            <div class="d-card">
+              <div class="d-label">Inventory Value</div>
+              <div class="d-val blue">2.1 L</div>
+              <div class="d-sub">Across 24 products</div>
+            </div>
+            <div class="d-card">
+              <div class="d-label">Slow-Moving Items</div>
+              <div class="d-val orange">7 items</div>
+              <div class="d-sub down">3 more than last month</div>
+            </div>
+            <div class="d-card">
+              <div class="d-label">Capital at Risk</div>
+              <div class="d-val red">38,000</div>
+              <div class="d-sub">Stuck in dead stock</div>
+            </div>
+          </div>
+          <div class="d-row">
+            <div class="d-panel">
+              <div class="d-panel-head">
+                Predicted Demand — Next 6 Months
+                <span class="d-badge green">AI FORECAST</span>
+              </div>
+              <div class="d-panel-body">
+                <div class="mini-chart">
+                  <div class="mini-bar-wrap"><div class="mini-bar green" style="height:46%"></div><div class="mini-label">May</div></div>
+                  <div class="mini-bar-wrap"><div class="mini-bar green" style="height:55%"></div><div class="mini-label">Jun</div></div>
+                  <div class="mini-bar-wrap"><div class="mini-bar green" style="height:63%"></div><div class="mini-label">Jul</div></div>
+                  <div class="mini-bar-wrap"><div class="mini-bar green" style="height:70%"></div><div class="mini-label">Aug</div></div>
+                  <div class="mini-bar-wrap"><div class="mini-bar green" style="height:82%"></div><div class="mini-label">Sep</div></div>
+                  <div class="mini-bar-wrap"><div class="mini-bar green" style="height:100%"></div><div class="mini-label">Oct</div></div>
+                  <div class="mini-bar-wrap"><div class="mini-bar faded" style="height:60%"></div><div class="mini-label">Stock</div></div>
+                </div>
+                <div style="margin-top:10px;font-size:10px;color:#5a7a8a">Demand rising 18% by October — restock before September for festival season</div>
+              </div>
+            </div>
+            <div class="d-panel">
+              <div class="d-panel-head">
+                Stock Risk Breakdown
+                <span class="d-badge red">3 ALERTS</span>
+              </div>
+              <div class="d-panel-body">
+                <div class="risk-list">
+                  <div class="risk-row">
+                    <div class="risk-name-d">Overstock</div>
+                    <div class="risk-track"><div class="risk-fill" style="width:65%;background:#ff4560"></div></div>
+                    <div class="risk-pct-d" style="color:#ff4560">65%</div>
+                  </div>
+                  <div class="risk-row">
+                    <div class="risk-name-d">Optimal</div>
+                    <div class="risk-track"><div class="risk-fill" style="width:22%;background:#00e5a0"></div></div>
+                    <div class="risk-pct-d" style="color:#00e5a0">22%</div>
+                  </div>
+                  <div class="risk-row">
+                    <div class="risk-name-d">Understock</div>
+                    <div class="risk-track"><div class="risk-fill" style="width:13%;background:#ffb800"></div></div>
+                    <div class="risk-pct-d" style="color:#ffb800">13%</div>
+                  </div>
+                </div>
+                <div style="margin-top:16px;padding:12px;background:rgba(255,69,96,0.08);border-radius:8px;border:1px solid rgba(255,69,96,0.15)">
+                  <div style="font-size:10px;color:#ff4560;font-weight:700;margin-bottom:3px">HIGH ALERT</div>
+                  <div style="font-size:12px;color:#e8f4f0;font-weight:600">38,000 locked in dead stock</div>
+                  <div style="font-size:10px;color:#5a7a8a;margin-top:2px">Working capital inefficiency detected</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div class="tab-screen" id="tab-products">
+      <div class="dash-shell">
+        <div class="dash-bar">
+          <div class="dash-dot" style="background:#ff5f57"></div>
+          <div class="dash-dot" style="background:#ffbd2e"></div>
+          <div class="dash-dot" style="background:#28ca41"></div>
+          <span style="font-size:11px;color:#5a7a8a;margin-left:10px">SmartStock AI — Product Intelligence Table</span>
+        </div>
+        <div class="dash-content">
+          <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+            <span class="d-badge red" style="padding:6px 14px;font-size:10px">5 Overstock</span>
+            <span class="d-badge green" style="padding:6px 14px;font-size:10px">3 Optimal</span>
+            <span class="d-badge orange" style="padding:6px 14px;font-size:10px">2 Understock</span>
+          </div>
+          <div class="d-panel">
+            <div class="d-panel-head">
+              All Products — Risk Analysis
+              <span class="d-badge green">10 Products</span>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="d-table">
+                <thead>
+                  <tr>
+                    <th>Product Name</th>
+                    <th>Current Stock</th>
+                    <th>Predicted Demand</th>
+                    <th>Risk Level</th>
+                    <th>Days to Clear</th>
+                    <th>Margin</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td><div class="d-tname">Basmati Rice 5kg</div></td><td>320 units</td><td>290 units</td><td><span class="d-chip chip-g">OPTIMAL</span></td><td style="color:#00e5a0;font-weight:600">12 days</td><td>22%</td></tr>
+                  <tr><td><div class="d-tname">Sunflower Oil 1L</div></td><td>540 units</td><td>210 units</td><td><span class="d-chip chip-r">OVERSTOCK</span></td><td style="color:#ff4560;font-weight:600">38 days</td><td>14%</td></tr>
+                  <tr><td><div class="d-tname">Detergent Powder</div></td><td>95 units</td><td>160 units</td><td><span class="d-chip chip-y">UNDERSTOCK</span></td><td style="color:#ffb800;font-weight:600">6 days</td><td>31%</td></tr>
+                  <tr><td><div class="d-tname">Premium Biscuits</div></td><td>680 units</td><td>140 units</td><td><span class="d-chip chip-r">OVERSTOCK</span></td><td style="color:#ff4560;font-weight:600">71 days</td><td>18%</td></tr>
+                  <tr><td><div class="d-tname">Green Tea Box</div></td><td>430 units</td><td>80 units</td><td><span class="d-chip chip-r">OVERSTOCK</span></td><td style="color:#ff4560;font-weight:600">89 days</td><td>42%</td></tr>
+                  <tr><td><div class="d-tname">Instant Noodles</div></td><td>120 units</td><td>250 units</td><td><span class="d-chip chip-y">UNDERSTOCK</span></td><td style="color:#ffb800;font-weight:600">7 days</td><td>20%</td></tr>
+                  <tr><td><div class="d-tname">Wheat Flour 10kg</div></td><td>210 units</td><td>195 units</td><td><span class="d-chip chip-g">OPTIMAL</span></td><td style="color:#00e5a0;font-weight:600">15 days</td><td>11%</td></tr>
+                  <tr><td><div class="d-tname">Tata Salt 1kg</div></td><td>820 units</td><td>750 units</td><td><span class="d-chip chip-g">OPTIMAL</span></td><td style="color:#00e5a0;font-weight:600">8 days</td><td>9%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI TAB -->
+    <div class="tab-screen" id="tab-ai">
+      <div class="dash-shell">
+        <div class="dash-bar">
+          <div class="dash-dot" style="background:#ff5f57"></div>
+          <div class="dash-dot" style="background:#ffbd2e"></div>
+          <div class="dash-dot" style="background:#28ca41"></div>
+          <span style="font-size:11px;color:#5a7a8a;margin-left:10px">SmartStock AI — Recommendations Engine</span>
+        </div>
+        <div class="dash-content">
+          <div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px">
+            <div style="font-size:28px">🧠</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:#e8f4f0;margin-bottom:3px">AI has found 7 recommendations for your store</div>
+              <div style="font-size:11px;color:#5a7a8a">Potential savings: 52,000 &nbsp;·&nbsp; Confidence: 87% &nbsp;·&nbsp; Based on 6 months of sales data</div>
+            </div>
+          </div>
+          <div class="ai-cards">
+            <div class="ai-card red">
+              <div class="ai-icon">📉</div>
+              <div class="ai-body">
+                <div class="ai-title">Reduce Premium Biscuits stock by 70%</div>
+                <div class="ai-desc">680 units in stock vs. 140 predicted demand. Run a 15% discount to clear. Risk of full write-off in 2 months if not acted on.</div>
+              </div>
+              <div class="ai-impact red">- 14,200</div>
+            </div>
+            <div class="ai-card red">
+              <div class="ai-icon">🌿</div>
+              <div class="ai-body">
+                <div class="ai-title">Liquidate Green Tea inventory immediately</div>
+                <div class="ai-desc">430 units, 89-day turnover. Bundle with fast-movers or offer wholesale to prevent dead investment of 12,800.</div>
+              </div>
+              <div class="ai-impact red">- 12,800</div>
+            </div>
+            <div class="ai-card green">
+              <div class="ai-icon">🍜</div>
+              <div class="ai-body">
+                <div class="ai-title">Restock Instant Noodles before demand spike</div>
+                <div class="ai-desc">Only 120 units in stock; AI predicts 250-unit demand next month. Festival and student market surge. Order 180 units this week.</div>
+              </div>
+              <div class="ai-impact green">+ 9,600</div>
+            </div>
+            <div class="ai-card yellow">
+              <div class="ai-icon">📅</div>
+              <div class="ai-body">
+                <div class="ai-title">Pre-load festival season stock for October</div>
+                <div class="ai-desc">AI predicts 65% demand spike in October. Snacks, beverages, and personal care will surge. Place orders in September for 20% better pricing.</div>
+              </div>
+              <div class="ai-impact green">+ 14,000</div>
+            </div>
+            <div class="ai-card blue">
+              <div class="ai-icon">🧴</div>
+              <div class="ai-body">
+                <div class="ai-title">Bundle slow movers with fast-selling products</div>
+                <div class="ai-desc">Pair Shampoo and Toothpaste as a combo. Estimated 40% faster clearance rate. Reduces personal care capital from 18,000 to 11,000.</div>
+              </div>
+              <div class="ai-impact green">+ 7,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-eyebrow reveal">What You Get</div>
+    <h2 class="reveal">Built specifically for shop owners,<br>not IT teams.</h2>
+    <p class="features-lead reveal">Every feature is designed around how a small retailer actually thinks and works.</p>
+    <div class="feat-grid reveal">
+      <div class="feat-card">
+        <div class="feat-tag green">Core Feature</div>
+        <h3>AI Demand Forecasting</h3>
+        <p>Predicts how much of each product you will sell next month, based on your actual past sales and seasonal patterns.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-tag orange">Risk Detection</div>
+        <h3>Dead Stock Detection</h3>
+        <p>Instantly flags products that are becoming a financial liability before they cost you more money. Know before it hurts.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-tag yellow">Smart Buying</div>
+        <h3>Reorder Suggestions</h3>
+        <p>Tells you exactly how much of each product to order — not too much, not too little. Stop guessing forever.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-tag green">Finance</div>
+        <h3>Working Capital View</h3>
+        <p>See exactly how much money is tied up in inventory and where it can be freed up to improve your cash flow today.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-tag orange">Alerts</div>
+        <h3>Live Risk Alerts</h3>
+        <p>Get notified when a product hits danger zone — overstock, understock, or low margin. React before it is too late.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-tag yellow">Simplicity</div>
+        <h3>Zero Technical Setup</h3>
+        <p>Works on any phone or computer. No app download, no spreadsheet knowledge, no IT person required. Just you and your data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-eyebrow reveal">Pricing</div>
+    <h2 class="reveal">Honest pricing for small businesses.</h2>
+    <p class="pricing-lead reveal">No hidden fees. No long contracts. Cancel any time.</p>
+    <div class="price-cards reveal">
+      <div class="price-card">
+        <div class="price-plan">Starter</div>
+        <div class="price-val"><sup>₹</sup>0</div>
+        <div class="price-mo">Free forever</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Up to 20 products</li>
+          <li><span class="check">✓</span> Basic demand forecast</li>
+          <li><span class="check">✓</span> Risk level view</li>
+          <li><span class="check">✓</span> Email support</li>
+        </ul>
+        <button class="price-btn">Get Started Free</button>
+      </div>
+      <div class="price-card popular">
+        <div class="pop-badge">Most Popular</div>
+        <div class="price-plan">Growth</div>
+        <div class="price-val"><sup>₹</sup>799</div>
+        <div class="price-mo">per month · billed monthly</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Up to 200 products</li>
+          <li><span class="check">✓</span> Full AI demand forecasting</li>
+          <li><span class="check">✓</span> Dead stock and reorder alerts</li>
+          <li><span class="check">✓</span> Festival season planner</li>
+          <li><span class="check">✓</span> WhatsApp alerts</li>
+          <li><span class="check">✓</span> Priority support</li>
+        </ul>
+        <button class="price-btn filled">Start 14-Day Free Trial</button>
+      </div>
+      <div class="price-card">
+        <div class="price-plan">Business</div>
+        <div class="price-val"><sup>₹</sup>1,999</div>
+        <div class="price-mo">per month · billed monthly</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> Unlimited products</li>
+          <li><span class="check">✓</span> Multi-branch support</li>
+          <li><span class="check">✓</span> All Growth features</li>
+          <li><span class="check">✓</span> Custom AI model training</li>
+          <li><span class="check">✓</span> Dedicated account manager</li>
+          <li><span class="check">✓</span> API access</li>
+        </ul>
+        <button class="price-btn">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testi-inner">
+    <h2 class="reveal">What shop owners are saying</h2>
+    <div class="testi-grid reveal">
+      <div class="testi-card">
+        <div class="testi-quote">"I used to order by instinct and always ended up with the wrong stock. SmartStock told me which 4 products were killing my cash flow. I cleared them and bought what was actually selling."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">🧑</div>
+          <div>
+            <div class="testi-name">Ramesh Iyer</div>
+            <div class="testi-role">Grocery Store Owner, Coimbatore</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"The festival season planner is brilliant. Last Diwali I was prepared two months early. My sales went up 40% and I did not run out of a single fast-selling product."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">👩</div>
+          <div>
+            <div class="testi-name">Priya Nair</div>
+            <div class="testi-role">Cosmetics Retailer, Kochi</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-quote">"I had 80,000 rupees stuck in dead stock that I did not even realize. The AI flagged it in the first week. After clearing it, I had money to invest in growing my store."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">🧑</div>
+          <div>
+            <div class="testi-name">Karthik Subramaniam</div>
+            <div class="testi-role">General Store, Madurai</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Your inventory should<br>work for you — <span>not against you.</span></h2>
+  <p>Join 500+ small retailers already using AI to make smarter buying decisions and grow their margins.</p>
+  <div class="cta-btns">
+    <button class="btn-white" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">See Free Demo</button>
+    <button class="btn-ghost">Join Waitlist</button>
+  </div>
+</section>
+
+<footer>
+  <p>Built with care for small business owners across India &nbsp;·&nbsp; <span>SmartStock AI</span> &nbsp;·&nbsp; 2025</p>
+</footer>
+
+<script>
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
